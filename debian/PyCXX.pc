@@ -1,0 +1,9 @@
+prefix=/usr
+exec_prefix=/usr
+includedir=/usr/include/CXX
+srcdir=/usr/src/CXX
+
+Name: PyCXX
+Description: Write Python extensions in C++
+Version: 6.2.5
+Cflags: -I${includedir}

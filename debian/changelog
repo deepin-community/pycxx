@@ -1,0 +1,394 @@
+pycxx (7.1.4-0.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * New upstream version, supporting Python 3.9. Closes: #972027.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 14 Oct 2020 18:21:17 +0200
+
+pycxx (7.1.3-0.2) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Add missing Breaks.  (Closes: #940919)
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 21 Aug 2020 01:25:21 +0200
+
+pycxx (7.1.3-0.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * New upstream version, supporting Python 3.8. Closes: #934532.
+  * Fix header installation for Python 3.8. Closes: #942714.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 23 Nov 2019 02:41:40 +0100
+
+pycxx (7.0.3-3) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Ondřej Nový ]
+  * d/control: Remove ancient X-Python-Version field
+  * d/control: Remove ancient X-Python3-Version field
+  * d/watch: Use https protocol
+  * Use debhelper-compat instead of debian/compat.
+
+  [ Scott Kitterman ]
+  * Drop obsolete python-cxx-dev binary (Closes: #937416)
+  * Update autopkgtest to allow stderr so X-Python3-Version fallback warning
+    does not cause the tests to fail
+
+ -- Scott Kitterman <scott@kitterman.com>  Sat, 31 Aug 2019 11:35:45 -0400
+
+pycxx (7.0.3-2) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * d/control: Set Vcs-* to salsa.debian.org
+  * d/copyright: Use https protocol in Format field
+  * d/tests: Use AUTOPKGTEST_TMP instead of ADTTMP
+
+  [ Julian Taylor ]
+  * fix compilation in test with python3.7 (Closes: #902673)
+  * fix test failure on 32 bit, thanks to Graham Inggs for the patch
+    Closes: #888414
+  * update debian/compat to 9
+  * update standards to 4.1.4
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Wed, 04 Jul 2018 18:41:18 +0200
+
+pycxx (7.0.3-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #869215)
+  * Build depend on 2to3 (Closes: #884667)
+  * Fix autopackage tests (Closes: #859747)
+  * Bump standard to 4.1.3
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Sun, 07 Jan 2018 14:15:52 +0100
+
+pycxx (7.0.1-2) unstable; urgency=medium
+
+  * Team upload.
+  * Rebuild to add support for python3.6
+
+ -- Scott Kitterman <scott@kitterman.com>  Sat, 01 Jul 2017 12:03:43 -0400
+
+pycxx (7.0.1-1) unstable; urgency=medium
+
+  [ Ondřej Nový ]
+  * Fixed VCS URL (https)
+
+  [ Josue Ortega ]
+  * Team upload.
+  * New upsteram version.
+    - Add debian/NEWS file.
+  * debian/control:
+     - Bump Standards-Version to 3.9.8; no changes needed.
+     - Remove XS-Testsuite field, it is not longer needed since it just
+       contains "autopkgtest" value.
+
+ -- Josue Ortega <josue@debian.org>  Sun, 25 Sep 2016 13:03:53 -0600
+
+pycxx (6.2.6-2) unstable; urgency=medium
+
+  * Team upload.
+  * Rebuild to add support for python3.5
+  * Add dh-python to build-depends
+
+ -- Scott Kitterman <scott@kitterman.com>  Sun, 11 Oct 2015 20:00:28 -0400
+
+pycxx (6.2.6-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+  * debian/control: Bump Standards-Version to 3.9.6; no changes needed.
+  * debian/copyright: Use the correct license shortname (BSD-3-clause
+    instead of BSD).
+  * debian/patches:
+    - fix-version.patch: Refreshed.
+    - fix-example-crash.patch: Removed; applied upstream.
+
+ -- Barry Warsaw <barry@debian.org>  Mon, 17 Aug 2015 14:56:26 -0400
+
+pycxx (6.2.5-3) unstable; urgency=medium
+
+  * Team upload.
+  * Install python3 files in real vice symlinked location (Closes: #767831)
+    - Change debian/rules to use python3.Xm vice python3.X
+    - Bump minimum X-Python3-Version to 3.3 for compatibility with the new
+      location
+
+ -- Scott Kitterman <scott@kitterman.com>  Thu, 13 Nov 2014 00:23:35 -0500
+
+pycxx (6.2.5-2) unstable; urgency=medium
+
+  * Team upload
+
+  [ Iain Lane ]
+  * Dereference symlinks when copying the examples into the test directory, so
+    that they exist when the autopkgtest tries to run them.
+
+  [ Scott Kitterman ]
+  * Rebuild to drop python3.3 support
+
+ -- Scott Kitterman <scott@kitterman.com>  Sat, 12 Jul 2014 12:04:15 -0400
+
+pycxx (6.2.5-1) unstable; urgency=medium
+
+  * New upstream release (Closes: #739879)
+    - drop upstream applied 02_fix_indentation.patch
+    - add fix-version.patch to fix setup.py version number
+    - fix-example-crash.patch: fix crash of example with python3.4-dbg
+  * additionally install sources into a folder independent of the python
+    version and provide PyCXX.pc to export its location
+  * add README.Debian documenting a way to use pycxx (Closes: #732120)
+  * debian/rules: clean to allow build twice in a row (Closes: #671415)
+  * Bump standard version to 3.9.5, no changes required
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Sun, 09 Mar 2014 14:48:16 +0100
+
+pycxx (6.2.4-5) unstable; urgency=low
+
+  * Team upload
+  * No change rebuild to drop python3.2 support
+
+ -- Scott Kitterman <scott@kitterman.com>  Sat, 03 Aug 2013 22:39:21 -0400
+
+pycxx (6.2.4-4) unstable; urgency=low
+
+  [ Jakub Wilk ]
+  * Use canonical URIs for Vcs-* fields.
+
+  [ Julian Taylor ]
+  * drop obsolete python2.[4]-* break/replaces
+  * Bump standard version to 3.9.4, no changes required
+  * drop obsolete transitional python{3,}-cxx
+  * don't compress examples and fix their permissions
+  * add autopkgtest testing compilation
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Fri, 02 Aug 2013 18:53:51 +0200
+
+pycxx (6.2.4-3) unstable; urgency=low
+
+  * install into real include/python3* folder instead of symlink folder
+    Thanks to Sebastian Ramacher for the patch. (Closes: #700782)
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Wed, 27 Feb 2013 19:34:50 +0100
+
+pycxx (6.2.4-2) unstable; urgency=low
+
+  * Remove symlink /usr/share/doc/python{,3}-cxx-dev before installing
+    - Closes: #696074
+    - thanks to Andreas Beckmann for the report and Ivo De Decker for the patch
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Sat, 22 Dec 2012 14:02:12 +0100
+
+pycxx (6.2.4-1) unstable; urgency=low
+
+  * New upstream release
+  * fix dep-5 format error in copyright
+  * update package descriptions
+  * update to standard 3.9.3 (no changes necessary)
+  * debian/copyright: update format url
+  * add description to patches
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Sun, 04 Mar 2012 19:09:09 +0100
+
+pycxx (6.2.3-1) unstable; urgency=low
+
+  * New maintainer (Closes: #611061)
+  * Imported Upstream version 6.2.3
+  * drop debian patches changing comment style + indentation
+  * change to source format 3.0 (quilt)
+  * quiltify include path changing patches
+  * quiltify indentation fix patch of setup.py
+    - update version number to 6.2.3
+  * simplify debian/rules by using debhelper 7
+  * made non -dev packages virtual, files now contained in -dev packages
+  * removed build dependency on python{,3}-dev, was never needed
+  * debian/control:
+    - set Homepage to http://cxx.sourceforge.net/
+    - added Vcs-* fields
+  * Bump standard version to 3.9.2
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Sat, 16 Apr 2011 01:47:47 +0200
+
+pycxx (6.2.0-7) unstable; urgency=low
+
+  * QA upload.
+  * No change rebuild for the python3.1 to 3.2 transition
+
+ -- Scott Kitterman <scott@kitterman.com>  Sat, 09 Apr 2011 09:57:43 -0400
+
+pycxx (6.2.0-6) unstable; urgency=low
+
+  * QA upload
+  * add -w -n to 2to3 usage so the files are actually modified (LP: #730144)
+
+ -- Julian Taylor <jtaylor.debian@googlemail.com>  Sun, 06 Mar 2011 18:14:57 +0100
+
+pycxx (6.2.0-5) unstable; urgency=low
+
+  * Orphan the package.
+
+ -- Matthias Klose <doko@debian.org>  Tue, 25 Jan 2011 07:07:25 +0100
+
+pycxx (6.2.0-4) unstable; urgency=low
+
+  * Upload to unstable.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 23 Sep 2010 01:51:34 +0200
+
+pycxx (6.2.0-3) experimental; urgency=low
+
+  * Use python3:* macros in the control file. Closes: #591955.
+  * Run 2to3 for python3-cxx. Closes: #595501.
+  * Fix typo in package description. Closes: #590634.
+
+ -- Matthias Klose <doko@debian.org>  Mon, 13 Sep 2010 23:32:14 +0200
+
+pycxx (6.2.0-2) unstable; urgency=low
+
+  * Build packages for python3.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 17 Jul 2010 15:10:37 +0200
+
+pycxx (6.2.0-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 17 Jul 2010 15:05:11 +0200
+
+pycxx (6.1.1-3) unstable; urgency=low
+
+  * Rebuild to add headers for python2.6. Closes: #567226.
+
+ -- Matthias Klose <doko@debian.org>  Thu, 28 Jan 2010 14:37:35 +0100
+
+pycxx (6.1.1-2) unstable; urgency=low
+
+  * Install missing header files.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 03 Jan 2010 16:30:10 +0100
+
+pycxx (6.1.1-1) unstable; urgency=low
+
+  * New upstream version. Closes: #548315.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 03 Jan 2010 15:48:14 +0100
+
+pycxx (5.5.0-1ubuntu1) karmic; urgency=low
+
+  * Call setup.py install using --install-layout=deb.
+
+ -- Matthias Klose <doko@ubuntu.com>  Sat, 29 Aug 2009 11:45:49 +0200
+
+pycxx (5.5.0-1) unstable; urgency=low
+
+  * New upstream version. Closes: #536394.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 29 Aug 2009 10:32:19 +0200
+
+pycxx (5.4.2-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 30 Nov 2008 14:30:21 +0000
+
+pycxx (5.4.1-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 20 Jul 2008 18:08:58 +0200
+
+pycxx (5.4.0-2) unstable; urgency=low
+
+  * Fix some lintian warnings.
+
+ -- Matthias Klose <doko@debian.org>  Wed, 25 Jun 2008 00:48:04 +0200
+
+pycxx (5.4.0-1) unstable; urgency=low
+
+  * New upstream version:
+    - license changed to BSD.
+    - bug fix release.
+  * Merge from Ubuntu:
+    - Apply header patches from sf#1640952.
+    - Install headers for the python debug builds.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 02 Jun 2007 09:26:34 +0200
+
+pycxx (5.3.6-1) unstable; urgency=low
+
+  * New upstream snapshot, to support python2.5.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 21 Oct 2006 17:43:45 +0200
+
+pycxx (5.3.5-3) unstable; urgency=low
+
+  * Update debian/watch.
+
+ -- Matthias Klose <doko@debian.org>  Sun,  9 Jul 2006 16:26:36 +0200
+
+pycxx (5.3.5-2) unstable; urgency=low
+
+  * Updated for the renewed Python policy. Closes: #373488.
+
+ -- Matthias Klose <doko@debian.org>  Fri, 16 Jun 2006 17:05:49 +0000
+
+pycxx (5.3.5-1.1) unstable; urgency=high
+
+  * Non-maintainer upload.
+  * Remove trainling slash in cp command (Closes: #339877).
+
+ -- Luk Claes <luk@debian.org>  Sun,  1 Jan 2006 15:10:27 +0100
+
+pycxx (5.3.5-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 15 Oct 2005 12:38:43 +0000
+
+pycxx (5.3.4-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Wed,  7 Sep 2005 20:37:58 +0200
+
+pycxx (5.3.3-3) unstable; urgency=low
+
+  * Fix file conflict.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 13 Aug 2005 13:09:43 +0200
+
+pycxx (5.3.3-2) unstable; urgency=low
+
+  * New upstream version, upload to unstable.
+
+ -- Matthias Klose <doko@debian.org>  Sat, 13 Aug 2005 09:42:47 +0200
+
+pycxx (5.3.3-1ubuntu1) breezy; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@ubuntu.com>  Fri,  3 Jun 2005 13:01:13 +0000
+
+pycxx (5.3.2-1ubuntu1) hoary; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@ubuntu.com>  Tue,  1 Mar 2005 22:45:30 +0100
+
+pycxx (5.3.1-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 23 Jan 2005 01:10:10 +0100
+
+pycxx (5.3.0-1) unstable; urgency=low
+
+  * Build python2.4 packages.
+
+ -- Matthias Klose <doko@debian.org>  Sun, 12 Dec 2004 18:21:44 +0100
+
+pycxx (5.3.0-0ubuntu1) hoary; urgency=low
+
+  * Initial Release.
+
+ -- Matthias Klose <m@klose.in-berlin.de>  Fri,  3 Dec 2004 17:16:12 +0100

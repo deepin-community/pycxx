@@ -1,0 +1,29 @@
+Source: pycxx
+Section: python
+Priority: optional
+Maintainer: Debian Python Modules Team <python-modules-team@lists.alioth.debian.org>
+Uploaders: Julian Taylor <jtaylor.debian@googlemail.com>
+Build-Depends: 2to3,
+               debhelper-compat (= 9),
+               dh-python,
+               python3-all,
+               python3-all-dbg
+Standards-Version: 4.1.4
+Homepage: http://cxx.sourceforge.net
+Vcs-Git: https://salsa.debian.org/python-team/modules/pycxx.git
+Vcs-Browser: https://salsa.debian.org/python-team/modules/pycxx
+
+Package: python3-cxx-dev
+Architecture: all
+Depends: python3-dev, ${misc:Depends}, ${python3:Depends}
+Suggests: pkg-config
+Breaks: python-cxx-dev (<< 7.0.3-3)
+Replaces: python-cxx-dev (<< 7.0.3-3)
+Description: Set of facilities to extend Python3 with C++
+ PyCXX is a set of C++ facilities to make it easier to write Python3
+ extensions. The main advantage is that it greatly increases the
+ probability that your program will not make a reference-counting
+ errors and will not have to continually check error returns from
+ the Python C API.
+ .
+ This package contains the Python3 headers and sources.

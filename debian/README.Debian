@@ -1,0 +1,20 @@
+PyCXX does not offer a shared library,  it is intended users of this package
+compile the sources into their extensions.
+The Debian (and Fedora) package offers a pkg-config file named PyCXX.pc which
+exports the installed location of the headers and sources required to build, do
+not hardcode the path into your files.
+
+Example:
+Copy /usr/share/doc/python3-cxx-dev/examples/ into a writeable area from there
+you can compile an example by executing these commands:
+
+CFLAGS="$(pkg-config --cflags PyCXX) $(python3-config --cflags)"
+SRC="$(pkg-config --variable=srcdir PyCXX)"
+
+g++ -fPIC $CFLAGS simple.cxx \
+    $SRC/cxxextensions.c $SRC/cxx_extensions.cxx \
+    $SRC/cxxsupport.cxx \
+    $SRC/IndirectPythonInterface.cxx \
+    -shared -o simple.so
+python3 test_simple.py
+

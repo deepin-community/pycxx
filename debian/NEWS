@@ -1,0 +1,7 @@
+pycxx (7.0.1-1) unstable; urgency=medium
+
+  This version fixes a number of problems that require source
+  incompatible changes. However by defining PYCXX_6_2_COMPATIBILITY
+  the V6.2.x API is restored. This is not recommended for new code.
+
+ -- Josue Ortega <josue@debian.org>  Sun, 25 Sep 2016 12:26:59 -0600

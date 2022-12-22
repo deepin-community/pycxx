@@ -1,0 +1,52 @@
+From: Julian Taylor <Julian Taylor jtaylor.debian@googlemail.com>
+Date: Wed, 4 Jul 2018 18:27:19 +0200
+Subject: fix constness of __Py_PackageContext
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=902673
+
+The parameter was made const in python3.7, adapt interfaces to it.
+
+---
+ CXX/Python2/IndirectPythonInterface.hxx | 2 +-
+ CXX/Python3/IndirectPythonInterface.hxx | 2 +-
+ Src/IndirectPythonInterface.cxx         | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+Index: pycxx/CXX/Python2/IndirectPythonInterface.hxx
+===================================================================
+--- pycxx.orig/CXX/Python2/IndirectPythonInterface.hxx
++++ pycxx/CXX/Python2/IndirectPythonInterface.hxx
+@@ -153,7 +153,7 @@ int &_Py_VerboseFlag();
+ void _XINCREF( PyObject *op );
+ void _XDECREF( PyObject *op );
+ 
+-char *__Py_PackageContext();
++const char *__Py_PackageContext();
+ }
+ 
+ #endif    // __CXX_INDIRECT_PYTHON_INTERFACE__HXX__
+Index: pycxx/CXX/Python3/IndirectPythonInterface.hxx
+===================================================================
+--- pycxx.orig/CXX/Python3/IndirectPythonInterface.hxx
++++ pycxx/CXX/Python3/IndirectPythonInterface.hxx
+@@ -149,7 +149,7 @@ int &_Py_UnicodeFlag();
+ void _XINCREF( PyObject *op );
+ void _XDECREF( PyObject *op );
+ 
+-char *__Py_PackageContext();
++const char *__Py_PackageContext();
+ };
+ 
+ #endif    // __CXX_INDIRECT_PYTHON_INTERFACE__HXX__
+Index: pycxx/Src/IndirectPythonInterface.cxx
+===================================================================
+--- pycxx.orig/Src/IndirectPythonInterface.cxx
++++ pycxx/Src/IndirectPythonInterface.cxx
+@@ -468,7 +468,7 @@ int &_Py_InteractiveFlag()
+ int &_Py_OptimizeFlag()                 { return Py_OptimizeFlag; }
+ int &_Py_NoSiteFlag()                   { return Py_NoSiteFlag; }
+ int &_Py_VerboseFlag()                  { return Py_VerboseFlag; }
+-char *__Py_PackageContext()             { return _Py_PackageContext; }
++const char *__Py_PackageContext()             { return _Py_PackageContext; }
+ 
+ //
+ //    Needed to keep the abstactions for delayload interface

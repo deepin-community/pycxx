@@ -1,0 +1,29 @@
+#!/bin/sh
+set -efu
+SRC=$PWD
+py3s=$(py3versions -r)
+
+cd $AUTOPKGTEST_TMP
+
+cp -Lr /usr/share/doc/python3-cxx-dev/examples/ .
+cd examples
+
+for py in $py3s; do
+  export PYTHONPATH=$PWD/local/lib/$py/site-packages/CXX
+  $py setup.py build  2>&1
+  $py setup.py install --prefix=$PWD/local 2>&1
+  $py test_example.py
+  $py-dbg setup.py build 2>&1
+  $py-dbg setup.py install --prefix=$PWD/local 2>&1
+  $py-dbg test_example.py 2>&1
+
+  rm -rf $PYTHONPATH
+  # matplotlib install method
+  $py -c "import CXX" 2>&1
+  CFLAGS="$(pkg-config --cflags PyCXX) $($py-config --cflags)"
+  SRC="$(pkg-config --variable=srcdir PyCXX)"
+
+  g++ -fPIC $CFLAGS simple.cxx $SRC/cxxextensions.c $SRC/cxx_extensions.cxx $SRC/cxxsupport.cxx \
+      $SRC/IndirectPythonInterface.cxx $SRC/cxx_exceptions.cxx -shared -o simple.so 2>&1
+  $py test_simple.py 2>&1
+done
