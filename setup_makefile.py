@@ -3,9 +3,8 @@
 #
 import os
 import sys
-import distutils
-import distutils.sysconfig
-import distutils.util
+import sysconfig
+import subprocess
 
 _debug = False
 
@@ -16,37 +15,33 @@ def debug( msg ):
 #--------------------------------------------------------------------------------
 class Setup:
     def __init__( self, argv ):
-        args = argv[1:]
-        if len(args) < 2:
-            raise ValueError( 'Usage: setup.py win32|win64|macosx|linux> <makefile>' )
+        global _debug
 
-        self.opt_debug = False
+        args = iter(argv)
+        next(args)
+
         self.opt_pycxx_debug = False
         self.opt_limited_api = None
+        self.opt_warnings_as_errors = False
+        self.opt_cpp_std = None
+        self.opt_cc_std = None
 
         self.is_pypy = hasattr( sys, 'pypy_version_info' )
 
-        self.platform = args[0]
-        del args[0]
+        positional_args = []
 
-        self.__makefile = open( args[0], 'wt' )
-        del args[0]
+        for arg in args:
+            if arg == '--debug':
+                _debug = True
 
-        while len(args) > 0:
-            if args[0] == '--debug':
-                self.opt_debug = True
-                del args[0]
-
-            elif args[0] == '--pycxx-debug':
+            elif arg == '--pycxx-debug':
                 self.opt_pycxx_debug = True
-                del args[0]
 
-            elif args[0] == '--limited-api':
+            elif arg == '--limited-api':
                 self.opt_limited_api = '0x03040000'
-                del args[0]
 
-            elif args[0].startswith( '--limited-api=' ):
-                api = args[0][len('--limited-api='):]
+            elif arg.startswith( '--limited-api=' ):
+                api = arg[len('--limited-api='):]
                 if api.startswith( '0x' ):
                     self.opt_limited_api = api
                 else:
@@ -54,10 +49,28 @@ class Setup:
                     minor *= 0x10000
                     major *= 0x1000000
                     self.opt_limited_api = '0x%x' % (major+minor)
-                del args[0]
+
+            elif arg.startswith( '--c++-std=' ):
+                self.opt_cpp_std = arg[len('--c++-std='):]
+
+            elif arg.startswith( '--c-std=' ):
+                self.opt_cc_std = arg[len('--c-std='):]
+
+            elif arg == '--warnings-as-errors':
+                self.opt_warnings_as_errors = True
+
+            elif arg.startswith( '--' ):
+                raise ValueError( 'Unknown arg %r' % (arg,) )
 
             else:
-                raise ValueError( 'Unknown arg %r' % (args[0],) )
+                positional_args.append( arg )
+
+        if len(positional_args) != 2:
+            raise ValueError( 'Usage: setup_makefile.py win32|win64|macosx|linux> <makefile>' )
+
+        self.platform, makefile = positional_args
+
+        self.__makefile = open( makefile, 'wt' )
 
         self.setupCompile()
 
@@ -280,8 +293,15 @@ class Win32CompilerMSVC90(Compiler):
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
     def ruleC( self, target ):
-        # can reuse the C++ rule
-        self.ruleCxx( target )
+        obj_filename = target.getTargetFilename()
+
+        rules = []
+
+        rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
+        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target.getTargetFilename()) )
+        rules.append( '\t$(CC) /c %%(CCFLAGS)s /Fo%s /Fd%s %s' % (obj_filename, target.dependent.getTargetFilename( '.pdb' ), target.src_filename) )
+
+        self.makePrint( self.expand( '\n'.join( rules ) ) )
 
     def ruleClean( self, filename ):
         rules = []
@@ -312,6 +332,15 @@ class Win32CompilerMSVC90(Compiler):
                                         r'%(PYCXX_DEBUG)s'
                                         r'%(PYCXX_API)s' )
 
+        self._addVar( 'CCFLAGS',
+                                        r'/Zi /MT '
+                                        r'-I. -ISrc -I%(PYTHON_INCLUDE)s '
+                                        r'-D_CRT_NONSTDC_NO_DEPRECATE '
+                                        r'-U_DEBUG '
+                                        r'-D%(DEBUG)s '
+                                        r'%(PYCXX_DEBUG)s'
+                                        r'%(PYCXX_API)s' )
+
     def ruleTest( self, python_test ):
         rules = []
         rules.append( 'test:: %s %s' % (python_test.getTargetFilename(), python_test.python_extension.getTargetFilename()) )
@@ -324,24 +353,6 @@ class Win32CompilerMSVC90(Compiler):
 class CompilerGCC(Compiler):
     def __init__( self, setup ):
         Compiler.__init__( self, setup )
-
-        if self.setup.platform == 'macosx':
-            if sys.version_info[0] == 2:
-                maxsize = sys.maxint
-            else:
-                maxsize = sys.maxsize
-
-            if maxsize == (2**31-1):
-                arch = 'i386'
-
-            else:
-                arch = 'x86_64'
-
-            self._addVar( 'CCC',            'g++ -arch %s' % (arch,) )
-            self._addVar( 'CC',             'gcc -arch %s' % (arch,) )
-        else:
-            self._addVar( 'CCC',            'g++' )
-            self._addVar( 'CC',             'gcc' )
 
     def getPythonExtensionFileExt( self ):
         return '.so'
@@ -364,7 +375,7 @@ class CompilerGCC(Compiler):
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (target_filename,) )
-        rules.append( '\t%%(LDEXE)s -o %s %%(CCCFLAGS)s %s' % (target_filename, ' '.join( all_objects )) )
+        rules.append( '\t%%(LDEXE)s -o %s %%(CCFLAGS)s %s' % (target_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -377,7 +388,7 @@ class CompilerGCC(Compiler):
 
         rules.append( '%s : %s' % (target_filename, ' '.join( all_objects )) )
         rules.append( '\t@echo Link %s' % (target_filename,) )
-        rules.append( '\t%%(LDSHARED)s -o %s %%(CCCFLAGS)s %s' % (target_filename, ' '.join( all_objects )) )
+        rules.append( '\t%%(LDSHARED)s -o %s %%(CCFLAGS)s %s' % (target_filename, ' '.join( all_objects )) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
 
@@ -398,7 +409,7 @@ class CompilerGCC(Compiler):
         rules = []
 
         rules.append( '%s: %s %s' % (obj_filename, target.src_filename, ' '.join( target.all_dependencies )) )
-        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, target) )
+        rules.append( '\t@echo Compile: %s into %s' % (target.src_filename, obj_filename) )
         rules.append( '\t%%(CC)s -c %%(CCCFLAGS)s -o%s  %s' % (obj_filename, target.src_filename) )
 
         self.makePrint( self.expand( '\n'.join( rules ) ) )
@@ -422,6 +433,16 @@ class CompilerGCC(Compiler):
 class MacOsxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
+        if sys.version_info[0] == 2:
+            maxsize = sys.maxint
+        else:
+            maxsize = sys.maxsize
+
+        r = subprocess.run( ['lipo', '-archs', sys.executable], capture_output=True )
+        all_archs = r.stdout.decode('utf-8').strip().split()
+
+        self._addVar( 'CCC',            'g++ %s' % (' '.join('-arch %s' % (a,) for a in all_archs),) )
+        self._addVar( 'CC',             'gcc %s' % (' '.join('-arch %s' % (a,) for a in all_archs),) )
 
     def setupPythonExtension( self ):
         self._addVar( 'PYTHON',         sys.executable )
@@ -447,11 +468,45 @@ class MacOsxCompilerGCC(CompilerGCC):
         self._addVar( 'PYCXX_DEBUG',    '-DPYCXX_DEBUG=1' if self.setup.opt_pycxx_debug else '' )
         self._addVar( 'PYCXX_API',      ('-DPy_LIMITED_API=%s' % (self.setup.opt_limited_api,)) if self.setup.opt_limited_api else '' )
 
+        self._addVar( 'WARN_AS_ERROR',  '-Werror' if self.setup.opt_warnings_as_errors else '' )
+        self._addVar( 'CPP_STD',        '-std=%s' % (self.setup.opt_cpp_std,) if self.setup.opt_cpp_std is not None else '' )
+        self._addVar( 'CC_STD',         '-std=%s' % (self.setup.opt_cc_std,) if self.setup.opt_cc_std is not None else '' )
+
         self._addVar( 'CCCFLAGS',
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-I. -ISrc -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s '
+                                        '%(WARN_AS_ERROR)s '
+                                        '%(CPP_STD)s '
+                                        '%(PYCXX_DEBUG)s'
+                                        '%(PYCXX_API)s' )
+        self._addVar( 'CCFLAGS',
+                                        '-g '
+                                        '-Wall -fPIC '
+                                        '-I. -ISrc -I%(PYTHON_INCLUDE)s '
+                                        '-D%(DEBUG)s '
+                                        '-Werror '
+                                        '%(PYCXX_DEBUG)s'
+                                        '%(PYCXX_API)s' )
+
+        self._addVar( 'CCCFLAGS',
+                                        '-g '
+                                        '-Wall -fPIC -fexceptions -frtti '
+                                        '-I. -ISrc -I%(PYTHON_INCLUDE)s '
+                                        '-D%(DEBUG)s '
+                                        '%(WARN_AS_ERROR)s '
+                                        '%(CPP_STD)s '
+                                        '%(PYCXX_DEBUG)s'
+                                        '%(PYCXX_API)s' )
+
+        self._addVar( 'CCFLAGS',
+                                        '-g '
+                                        '-Wall -fPIC '
+                                        '-I. -ISrc -I%(PYTHON_INCLUDE)s '
+                                        '-D%(DEBUG)s '
+                                        '%(WARN_AS_ERROR)s '
+                                        '%(CC_STD)s '
                                         '%(PYCXX_DEBUG)s'
                                         '%(PYCXX_API)s' )
 
@@ -462,7 +517,8 @@ class MacOsxCompilerGCC(CompilerGCC):
 class LinuxCompilerGCC(CompilerGCC):
     def __init__( self, setup ):
         CompilerGCC.__init__( self, setup )
-
+        self._addVar( 'CCC',            'g++' )
+        self._addVar( 'CC',             'gcc' )
 
     def setupPythonExtension( self ):
         self._addVar( 'PYTHON',         sys.executable )
@@ -472,14 +528,30 @@ class LinuxCompilerGCC(CompilerGCC):
         self._addVar( 'DEMO_DIR',       'Demo/Python%d' % (sys.version_info[0],) )
 
         self._addVar( 'PYTHON_VERSION', '%d.%d' % (sys.version_info[0], sys.version_info[1]) )
-        self._addVar( 'PYTHON_INCLUDE', distutils.sysconfig.get_python_inc() )
+        self._addVar( 'PYTHON_INCLUDE', sysconfig.get_path( 'include' ) )
         self._addVar( 'PYCXX_DEBUG',    '-DPYCXX_DEBUG=1' if self.setup.opt_pycxx_debug else '' )
         self._addVar( 'PYCXX_API',      ('-DPy_LIMITED_API=%s' % (self.setup.opt_limited_api,)) if self.setup.opt_limited_api else '' )
+
+        self._addVar( 'WARN_AS_ERROR',  '-Werror' if self.setup.opt_warnings_as_errors else '' )
+        self._addVar( 'CPP_STD',        '-std=%s' % (self.setup.opt_cpp_std,) if self.setup.opt_cpp_std is not None else '' )
+        self._addVar( 'CC_STD',         '-std=%s' % (self.setup.opt_cc_std,) if self.setup.opt_cc_std is not None else '' )
+
         self._addVar( 'CCCFLAGS',
                                         '-g '
                                         '-Wall -fPIC -fexceptions -frtti '
                                         '-I. -ISrc -I%(PYTHON_INCLUDE)s '
                                         '-D%(DEBUG)s '
+                                        '%(WARN_AS_ERROR)s '
+                                        '%(CPP_STD)s '
+                                        '%(PYCXX_DEBUG)s '
+                                        '%(PYCXX_API)s ' )
+        self._addVar( 'CCFLAGS',
+                                        '-g '
+                                        '-Wall -fPIC '
+                                        '-I. -ISrc -I%(PYTHON_INCLUDE)s '
+                                        '-D%(DEBUG)s '
+                                        '%(WARN_AS_ERROR)s '
+                                        '%(CC_STD)s '
                                         '%(PYCXX_DEBUG)s'
                                         '%(PYCXX_API)s' )
 
@@ -601,7 +673,12 @@ class Source(Target):
     def _generateMakefile( self ):
         debug( 'Source:0x%8.8x.generateMakefile() for %r' % (id(self), self.src_filename,) )
 
-        self.compiler.ruleCxx( self )
+        if self.src_filename.endswith( '.c' ):
+            self.compiler.ruleC( self )
+
+        else:
+            self.compiler.ruleCxx( self )
+
         self.compiler.ruleClean( self.getTargetFilename() )
 
 #--------------------------------------------------------------------------------

@@ -1,0 +1,7 @@
+CXX/*.h         /usr/include/CXX/
+CXX/*.hxx       /usr/include/CXX/
+CXX/Python3/*   /usr/include/CXX/Python3/
+Src/*.c         /usr/src/CXX/
+Src/*.cxx       /usr/src/CXX/
+Src/Python3/*   /usr/src/CXX/Python3/
+debian/PyCXX.pc /usr/lib/pkgconfig/

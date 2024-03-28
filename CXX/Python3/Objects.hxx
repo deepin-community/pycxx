@@ -51,6 +51,7 @@
 #include <utility>
 #include <typeinfo>
 #include <algorithm>
+#include <cstring>
 
 namespace Py
 {
@@ -1310,19 +1311,19 @@ namespace Py
             return PySequence_Length( ptr() );
         }
 
-        explicit SeqBase<T>()
+        explicit SeqBase()
         :Object( PyTuple_New( 0 ), true )
         {
             validate();
         }
 
-        explicit SeqBase<T>( PyObject *pyob, bool owned=false )
+        explicit SeqBase( PyObject *pyob, bool owned=false )
         : Object( pyob, owned )
         {
             validate();
         }
 
-        SeqBase<T>( const Object &ob )
+        SeqBase( const Object &ob )
         : Object( ob )
         {
             validate();
@@ -1965,7 +1966,7 @@ namespace Py
 
 #if !defined( Py_LIMITED_API )
         Char( const unicodestring &v )
-        : Object( PyUnicode_FromUnicode( const_cast<Py_UNICODE*>( v.data() ),1 ), true )
+        : Object( PyUnicode_FromKindAndData( PyUnicode_4BYTE_KIND, const_cast<Py_UNICODE*>( v.data() ),1 ), true )
         {
             validate();
         }
@@ -1987,7 +1988,7 @@ namespace Py
 #if !defined( Py_LIMITED_API )
         Char &operator=( const unicodestring &v )
         {
-            set( PyUnicode_FromUnicode( const_cast<Py_UNICODE*>( v.data() ), 1 ), true );
+            set( PyUnicode_FromKindAndData( PyUnicode_4BYTE_KIND, const_cast<Py_UNICODE*>( v.data() ), 1 ), true );
             return *this;
         }
 #endif
@@ -1996,7 +1997,7 @@ namespace Py
         Char &operator=( int v_ )
         {
             Py_UNICODE v( static_cast<Py_UNICODE>( v_ ) );
-            set( PyUnicode_FromUnicode( &v, 1 ), true );
+            set( PyUnicode_FromKindAndData( PyUnicode_4BYTE_KIND, &v, 1 ), true );
             return *this;
         }
 #endif
@@ -2004,7 +2005,7 @@ namespace Py
 #if !defined( Py_LIMITED_API )
         Char &operator=( Py_UNICODE v )
         {
-            set( PyUnicode_FromUnicode( &v, 1 ), true );
+            set( PyUnicode_FromKindAndData( PyUnicode_4BYTE_KIND, &v, 1 ), true );
             return *this;
         }
 #endif
@@ -2142,7 +2143,7 @@ namespace Py
 
 #if !defined( Py_LIMITED_API )
         String( const Py_UNICODE *s, int length )
-        : SeqBase<Char>( PyUnicode_FromUnicode( s, length ), true )
+        : SeqBase<Char>( PyUnicode_FromKindAndData( PyUnicode_4BYTE_KIND, s, length ), true )
         {
             validate();
         }
@@ -2164,7 +2165,7 @@ namespace Py
 #if !defined( Py_LIMITED_API )
         String &operator=( const unicodestring &v )
         {
-            set( PyUnicode_FromUnicode( const_cast<Py_UNICODE *>( v.data() ), v.length() ), true );
+            set( PyUnicode_FromKindAndData( PyUnicode_4BYTE_KIND, const_cast<Py_UNICODE *>( v.data() ), v.length() ), true );
             return *this;
         }
 #endif
@@ -2190,6 +2191,7 @@ namespace Py
         }
 #endif
 
+#if PY_MAJOR_VERSION == 3 && PY_MINOR_VERSION < 9
 #if !defined( Py_LIMITED_API )
         const Py_UNICODE *unicode_data() const
         {
@@ -2203,6 +2205,8 @@ namespace Py
             return unicodestring( unicode_data(), PyUnicode_GetLength( ptr() ) );
         }
 #endif
+#endif
+
         ucs4string as_ucs4string() const
         {
             Py_UCS4 *buf = new Py_UCS4[ size() ];
@@ -2556,20 +2560,20 @@ namespace Py
         T the_item;
 
     public:
-        mapref<T>( MapBase<T> &map, const std::string &k )
+        mapref( MapBase<T> &map, const std::string &k )
         : s( map ), the_item()
         {
             key = String( k );
             if( map.hasKey( key ) ) the_item = map.getItem( key );
         }
 
-        mapref<T>( MapBase<T> &map, const Object &k )
+        mapref( MapBase<T> &map, const Object &k )
         : s( map ), key( k ), the_item()
         {
             if( map.hasKey( key ) ) the_item = map.getItem( key );
         }
 
-        virtual ~mapref<T>()
+        virtual ~mapref()
         {}
 
         // MapBase<T> stuff
@@ -2729,7 +2733,7 @@ namespace Py
     class MapBase: public Object
     {
     protected:
-        explicit MapBase<T>()
+        explicit MapBase()
         {}
     public:
         // reference: proxy class for implementing []
@@ -2746,14 +2750,14 @@ namespace Py
         typedef std::pair< const T, mapref<T> > pointer;
 
         // Constructor
-        explicit MapBase<T>( PyObject *pyob, bool owned = false )
+        explicit MapBase( PyObject *pyob, bool owned = false )
         : Object( pyob, owned )
         {
             validate();
         }
 
         // TMM: 02Jul'01 - changed MapBase<T> to Object in next line
-        MapBase<T>( const Object &ob )
+        MapBase( const Object &ob )
         : Object( ob )
         {
             validate();
@@ -3253,7 +3257,7 @@ namespace Py
             }
             return asObject( result );
         }
-#if PY_MAJOR_VERSION == 3 && PY_MINOR_VERSION >= 9
+#if (!defined( Py_LIMITED_API ) && PY_MAJOR_VERSION == 3 && PY_MINOR_VERSION >= 9) || (defined( Py_LIMITED_API ) && Py_LIMITED_API+0 >= 0x03090000)
         Object apply() const
         {
             PyObject *result = PyObject_CallNoArgs( ptr() );
