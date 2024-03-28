@@ -11,6 +11,8 @@ echo Testing unlimited API for python %1 %2 using VC %3
 echo ----------------------------------------------------
 
 if %PYTHON_ARCH% == win32 (
+    set PYTHON_VER_ARCH=%PYTHON_VER%-32
+
     if %VC_VER% == 9.0 (
         call "%LOCALAPPDATA%\Programs\Common\Microsoft\Visual C++ for Python\%VC_VER%\vcvarsall.bat" x86
     ) else (
@@ -23,6 +25,8 @@ if %PYTHON_ARCH% == win32 (
     )
 )
 if %PYTHON_ARCH% == win64 (
+    set PYTHON_VER_ARCH=%PYTHON_VER%-64
+
     if %VC_VER% == 9.0 (
         call "%LOCALAPPDATA%\Programs\Common\Microsoft\Visual C++ for Python\%VC_VER%\vcvarsall.bat" x64
     ) else (
@@ -35,11 +39,9 @@ if %PYTHON_ARCH% == win64 (
     )
 )
 
-if exist c:\python%PYTHON_VER%.%PYTHON_ARCH%\python.exe (
-    c:\python%PYTHON_VER%.%PYTHON_ARCH%\python setup_makefile.py %PYTHON_ARCH% tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-build.mak
-    if errorlevel 1 exit /b 1
-    nmake -f tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-build.mak clean all 2>&1 | c:\UnxUtils\usr\local\wbin\tee.exe tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-build.log
-    if not exist obj\pycxx_iter.pyd exit /b 1
-    nmake -f tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-build.mak test 2>&1 | c:\UnxUtils\usr\local\wbin\tee.exe tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-test.log
-)
+py -%PYTHON_VER_ARCH% setup_makefile.py %PYTHON_ARCH% tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-build.mak
+if errorlevel 1 exit /b 1
+nmake -f tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-build.mak clean all 2>&1 | py -3 build_tee.py tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-build.log
+if not exist obj\pycxx_iter.pyd exit /b 1
+nmake -f tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-build.mak test 2>&1 | py -3 build_tee.py -a tmp-%PYTHON_ARCH%-python%PYTHON_VER%-unlimited-test.log
 endlocal

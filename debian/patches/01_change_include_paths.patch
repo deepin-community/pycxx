@@ -1,5 +1,5 @@
-From: SVN-Git Migration <python-modules-team@lists.alioth.debian.org>
-Date: Thu, 8 Oct 2015 10:26:03 -0700
+From: Julian Taylor <jtaylor.debian@googlemail.com>
+Date: Sat, 16 Apr 2011 01:47:47 +0200
 Subject: fix includes to match packaged layout
 
 Forwarded: not-needed
@@ -10,10 +10,10 @@ Patch-Name: 01_change_include_paths.patch
  Src/cxxsupport.cxx  | 4 ++--
  2 files changed, 4 insertions(+), 4 deletions(-)
 
-Index: pycxx/Src/cxxextensions.c
-===================================================================
---- pycxx.orig/Src/cxxextensions.c
-+++ pycxx/Src/cxxextensions.c
+diff --git a/Src/cxxextensions.c b/Src/cxxextensions.c
+index 28a8e1d..cfab556 100644
+--- a/Src/cxxextensions.c
++++ b/Src/cxxextensions.c
 @@ -37,7 +37,7 @@
  #include "CXX/WrapPython.h"
  
@@ -24,10 +24,10 @@ Index: pycxx/Src/cxxextensions.c
 -#include "Src/Python3/cxxextensions.c"
 +#include "Python3/cxxextensions.c"
  #endif
-Index: pycxx/Src/cxxsupport.cxx
-===================================================================
---- pycxx.orig/Src/cxxsupport.cxx
-+++ pycxx/Src/cxxsupport.cxx
+diff --git a/Src/cxxsupport.cxx b/Src/cxxsupport.cxx
+index 1f2fb43..946e60d 100644
+--- a/Src/cxxsupport.cxx
++++ b/Src/cxxsupport.cxx
 @@ -37,7 +37,7 @@
  #include "CXX/WrapPython.h"
  

@@ -1,11 +1,18 @@
-Description: Fix autopkgtest failure on 32-bit architectures
-Bug-Debian: https://bugs.debian.org/888414
-Author: Graham Inggs <ginggs@debian.org>
-Last-Update: 2018-01-26
+From: Graham Inggs <ginggs@debian.org>
+Date: Thu, 25 Jan 2018 11:32:33 +0200
+Subject: Fix autopkgtest failure on 32-bit architectures
 
+Bug-Debian: https://bugs.debian.org/888414
+Last-Update: 2018-01-26
+---
+ Demo/Python3/test_assert.hxx | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/Demo/Python3/test_assert.hxx b/Demo/Python3/test_assert.hxx
+index 0944544..d972e16 100644
 --- a/Demo/Python3/test_assert.hxx
 +++ b/Demo/Python3/test_assert.hxx
-@@ -54,6 +54,11 @@
+@@ -54,6 +54,11 @@ static void test_assert( const char *description, int benchmark, int value )
      test_assert_scaler( description, "int", benchmark, value );
  }
  

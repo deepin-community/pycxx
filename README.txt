@@ -1,9 +1,7 @@
-Version: 7.1.4 (31-May-2020)
+Version: 7.1.8 (18-Jun-2023)
 
-Add support for more number methods, like matrix and the inplace versions.
+Add support for building against python 3.12 beta
 
-Use IsInstance checking so that derived classes of builtin types can be used.
+_Py_PackageContext is no longer accessible.
 
-Update Docs with recent changes.
-
-Add support for python 3.9 beta 1 changes.
+This is Version 7.1.7 with README updates
