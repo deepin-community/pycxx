@@ -16,7 +16,7 @@
 #include "CXX/Extensions.hxx"
 
 #include <assert.h>
-
+#include <cstring>
 
 class new_style_class: public Py::PythonClass< new_style_class >
 {

@@ -1,3 +1,2 @@
 01_change_include_paths.patch
-#fix-constness-of-__Py_PackageContext.patch
 fix-32-bit-adt.patch

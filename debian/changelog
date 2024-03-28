@@ -1,3 +1,65 @@
+pycxx (7.1.8-2) unstable; urgency=medium
+
+  * Team upload.
+  * Rebuild for Python 3.12 support.
+
+ -- Stefano Rivera <stefanor@debian.org>  Sun, 03 Dec 2023 10:31:02 -0400
+
+pycxx (7.1.8-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream release.
+    - Adds support for python 3.12. (Closes: #1055336)
+  * Refresh patches.
+  * Drop disabled patch fix-constness-of-__Py_PackageContext.
+  * Clean correctly. (Closes: #1045578)
+  * Build-Depend on python3-setuptools, to provide distutils on Python 3.12.
+  * Bump swatch file format to 4.
+  * Bump Standards-Version to 4.6.2, no changes needed.
+  * Declare Rules-Requires-Root: no.
+  * Update copyright.
+  * Use only the pybuild build, not extra builds in debian/rules.
+
+ -- Stefano Rivera <stefanor@debian.org>  Tue, 07 Nov 2023 17:06:34 +0200
+
+pycxx (7.1.7-2) unstable; urgency=medium
+
+  * Team upload.
+  * Source-only upload to add Python 3.11 support. (Closes: #1024088)
+
+ -- Stefano Rivera <stefanor@debian.org>  Fri, 18 Nov 2022 17:57:04 +0200
+
+pycxx (7.1.7-1) unstable; urgency=medium
+
+  * Team upload.
+
+  [ Boyuan Yang ]
+  * New upstream release.
+    + Fix compatibility with python3.9+.
+  * Bump debhelper from deprecated 9 to 13.
+  * Bump Standards-Version to 4.6.1.
+  * debian/rules: Use "dh_missing --list-missing" due to manual
+    file installation.
+
+  [ Debian Janitor ]
+  * Trim trailing whitespace.
+
+  [ Ondřej Nový ]
+  * d/control: Update Maintainer field with new Debian Python Team
+    contact address.
+  * d/control: Update Vcs-* fields with new Debian Python Team Salsa
+    layout.
+
+ -- Boyuan Yang <byang@debian.org>  Sun, 29 May 2022 13:40:22 -0400
+
+pycxx (7.1.4-0.2) unstable; urgency=medium
+
+  * Non-maintainer upload
+  * No-change rebuild to add Python 3.10 as supported version
+    (Closes: #1000269)
+
+ -- Graham Inggs <ginggs@debian.org>  Sat, 20 Nov 2021 20:16:01 +0000
+
 pycxx (7.1.4-0.1) unstable; urgency=medium
 
   * Non-maintainer upload.
